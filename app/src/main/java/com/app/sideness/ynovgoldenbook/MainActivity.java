@@ -1,5 +1,8 @@
 package com.app.sideness.ynovgoldenbook;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,8 +11,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Adapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static ArrayList<String> listNom = new ArrayList<String>();
+    public static ArrayList<String> listMessage= new ArrayList<String>();
+    public static ArrayList<String> listPhoto= new ArrayList<String>();
+    public static CustomAdapter adapter ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +34,32 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(getApplicationContext(), AddSignature.class);
+                startActivityForResult(i, 1);
             }
         });
+
+        ListView lv=(ListView) findViewById(R.id.lvSignatures);
+        adapter = new CustomAdapter(getApplicationContext(),listNom,listMessage, listPhoto);
+        lv.setAdapter(adapter);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String[] result=data.getStringArrayExtra("result");
+                listNom.add(result[0]);
+                listMessage.add(result[1]);
+                listPhoto.add(result[2]);
+                adapter.notifyDataSetChanged();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

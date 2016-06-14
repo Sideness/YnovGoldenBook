@@ -3,112 +3,84 @@ package com.app.sideness.ynovgoldenbook;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-/**
- * Created by siden on 11/06/2016.
- */
-public class CustomAdapter extends BaseAdapter {
-
-    /*********** Declare Used Variables *********/
-    private Activity activity;
-    private ArrayList data;
+public class CustomAdapter extends BaseAdapter{
+    ArrayList<String> resultNom;
+    ArrayList<String> resultMsg;
+    Context context;
+    ArrayList<String> resultImg;
     private static LayoutInflater inflater=null;
-    public Resources res;
-    Signature tempValues=null;
-    int i=0;
-
-    /*************  CustomAdapter Constructor *****************/
-    public CustomAdapter(Activity a, ArrayList d,Resources resLocal) {
-
-        /********** Take passed values **********/
-        activity = a;
-        data=d;
-        res = resLocal;
-
-        /***********  Layout inflator to call external xml layout () ***********/
-        inflater = ( LayoutInflater )activity.
+    public CustomAdapter(Context context, ArrayList<String> nomSignataire, ArrayList<String> msgSignataire, ArrayList<String> imgSignataires) {
+        // TODO Auto-generated constructor stub
+        resultNom = nomSignataire;
+        resultMsg = msgSignataire;
+        context=context;
+        resultImg = imgSignataires;
+        inflater = ( LayoutInflater )context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
     }
-
-    /******** What is the size of Passed Arraylist Size ************/
+    @Override
     public int getCount() {
-
-        if(data.size()<=0)
-            return 1;
-        return data.size();
+        // TODO Auto-generated method stub
+        return resultNom.size();
     }
 
+    @Override
     public Object getItem(int position) {
+        // TODO Auto-generated method stub
         return position;
     }
 
+    @Override
     public long getItemId(int position) {
+        // TODO Auto-generated method stub
         return position;
     }
 
-    /********* Create a holder Class to contain inflated xml file elements *********/
-    public static class ViewHolder{
+    public class Holder
+    {
+        TextView tvNom;
+        TextView tvMsg;
+        ImageView img;
+    }
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        // TODO Auto-generated method stub
+        Holder holder=new Holder();
+        View rowView;
+        rowView = inflater.inflate(R.layout.signature_adapter, null);
+        holder.tvNom=(TextView) rowView.findViewById(R.id.tvNomSignataire);
+        holder.tvMsg=(TextView) rowView.findViewById(R.id.tvTextSignature);
+        holder.img=(ImageView) rowView.findViewById(R.id.imvSignature);
 
-        public TextView strSignature;
-        public TextView strNomSignataire;
-        public ImageView imSignataire;
+        try{
+            File f=new File(resultImg.get(position));
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+            holder.img.setImageBitmap(b);
+        }catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            //holder.img.setImageBitmap("default");
+        }
 
+
+        holder.tvNom.setText(resultNom.get(position));
+        holder.tvMsg.setText(resultMsg.get(position));
+        return rowView;
     }
 
-    /****** Depends upon data size called for each row , Create each ListView row *****/
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        View vi = convertView;
-        ViewHolder holder;
-
-        if(convertView==null){
-
-            /****** Inflate tabitem.xml file for each row ( Defined below ) *******/
-            vi = inflater.inflate(R.layout.signature_adapter, null);
-
-            /****** View Holder Object to contain tabitem.xml file elements ******/
-
-            holder = new ViewHolder();
-            holder.strSignature = (TextView) vi.findViewById(R.id.tvTextSignature);
-            holder.strNomSignataire=(TextView)vi.findViewById(R.id.tvNomSignataire);
-            holder.imSignataire=(ImageView)vi.findViewById(R.id.imvSignature);
-
-            /************  Set holder with LayoutInflater ************/
-            vi.setTag( holder );
-        }
-        else
-            holder=(ViewHolder)vi.getTag();
-
-        if(data.size()<=0)
-        {
-            holder.strSignature.setText("No Data");
-
-        }
-        else
-        {
-            /***** Get each Model object from Arraylist ********/
-            tempValues=null;
-            tempValues = ( Signature ) data.get( position );
-
-            /************  Set Model values in Holder elements ***********/
-
-            holder.strNomSignataire.setText( tempValues.getNomSignataire() );
-            holder.strSignature.setText( tempValues.getTextSignataire() );
-            holder.imSignataire.setImageResource(
-                    res.getIdentifier(
-                            "com.androidexample.customlistview:drawable/"+tempValues.getImgSignataire()
-                            ,null,null));
-        }
-        return vi;
-    }
 }
