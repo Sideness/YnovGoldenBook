@@ -37,6 +37,7 @@ public class AddSignature extends AppCompatActivity {
                 dispatchTakePictureIntent();
                 if(mCurrentPhotoPath != null){
                     btPhoto.setEnabled(false);
+                    btPhoto.setText("Photo enregistrée");
                 }
             }
         });
