@@ -68,10 +68,12 @@ public class CustomAdapter extends BaseAdapter{
         holder.img=(ImageView) rowView.findViewById(R.id.imvSignature);
 
         try{
-            File f=new File(resultImg.get(position));
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
-            holder.img.setImageBitmap(b);
-        }catch (FileNotFoundException e)
+            //File f=new File(resultImg.get(position));
+            String fname=new File(resultImg.get(position)).getAbsolutePath();
+            Bitmap bitmap = BitmapFactory.decodeFile(fname);
+
+            holder.img.setImageBitmap(bitmap);
+        }catch (Exception e)
         {
             e.printStackTrace();
             //holder.img.setImageBitmap("default");
